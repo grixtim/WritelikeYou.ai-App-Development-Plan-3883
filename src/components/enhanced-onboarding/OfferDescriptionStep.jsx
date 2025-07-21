@@ -9,7 +9,6 @@ const { FiSettings, FiArrowRight, FiArrowLeft } = FiIcons;
 
 const OfferDescriptionStep = ({ data, onUpdate }) => {
   const [offerDescription, setOfferDescription] = useState(data.offerDescription || '');
-  
   const currentStep = 6;
   const totalSteps = 7;
 
@@ -39,7 +38,7 @@ const OfferDescriptionStep = ({ data, onUpdate }) => {
       className="bg-white rounded-3xl shadow-xl p-8 md:p-12"
     >
       <OnboardingProgress currentStep={currentStep} totalSteps={totalSteps} />
-
+      
       <div className="text-center mb-8">
         <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
           <SafeIcon icon={FiSettings} className="w-8 h-8 text-white" />
@@ -95,6 +94,7 @@ const OfferDescriptionStep = ({ data, onUpdate }) => {
             <SafeIcon icon={FiArrowLeft} className="w-5 h-5" />
             <span>Back</span>
           </Link>
+
           <Link
             to="/enhanced-onboarding/reflection"
             onClick={handleContinue}
@@ -112,8 +112,7 @@ const OfferDescriptionStep = ({ data, onUpdate }) => {
 
       <div className="mt-8 p-4 bg-blue-50 rounded-xl">
         <p className="text-sm text-blue-700 text-center">
-          💡 <strong>Willy's tip:</strong> Don't worry about getting this exactly right. 
-          I just need to understand the basic format so I can give you relevant writing guidance.
+          💡 <strong>My tip:</strong> Don't worry about getting this exactly right. I just need to understand the basic format so I can give you relevant writing guidance.
         </p>
       </div>
     </motion.div>

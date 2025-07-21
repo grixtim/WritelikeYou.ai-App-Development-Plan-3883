@@ -7,7 +7,6 @@ import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
 import writingSessionRoutes from './routes/writingSessions.js';
 import subscriptionRoutes from './routes/subscriptions.js';
-import analyticsRoutes from './routes/analytics.js';
 import stripeWebhookRoutes from './webhooks/stripe-webhook.js';
 import { setupStripeProducts } from './config/stripe.js';
 
@@ -26,7 +25,6 @@ const limiter = rateLimit({
   max: 100, // limit each IP to 100 requests per windowMs
   message: 'Too many requests from this IP, please try again later.'
 });
-
 app.use(limiter);
 
 // CORS configuration
@@ -47,30 +45,28 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/writelike
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-  .then(() => {
-    console.log('✅ Connected to MongoDB');
-    
-    // Setup Stripe products if in development mode
-    if (process.env.NODE_ENV === 'development') {
-      setupStripeProducts()
-        .catch(err => console.error('Error setting up Stripe products:', err));
-    }
-  })
-  .catch((error) => {
-    console.error('❌ MongoDB connection error:', error);
-    process.exit(1);
-  });
+.then(() => {
+  console.log('✅ Connected to MongoDB');
+  
+  // Setup Stripe products if in development mode
+  if (process.env.NODE_ENV === 'development') {
+    setupStripeProducts().catch(err => console.error('Error setting up Stripe products:', err));
+  }
+})
+.catch((error) => {
+  console.error('❌ MongoDB connection error:', error);
+  process.exit(1);
+});
 
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/writing-sessions', writingSessionRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
-app.use('/api/analytics', analyticsRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
-  res.json({
-    status: 'OK',
+  res.json({ 
+    status: 'OK', 
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || 'development'
   });
@@ -79,7 +75,7 @@ app.get('/api/health', (req, res) => {
 // Error handling middleware
 app.use((error, req, res, next) => {
   console.error('Server error:', error);
-  res.status(500).json({
+  res.status(500).json({ 
     error: 'Internal server error',
     message: process.env.NODE_ENV === 'development' ? error.message : 'Something went wrong'
   });

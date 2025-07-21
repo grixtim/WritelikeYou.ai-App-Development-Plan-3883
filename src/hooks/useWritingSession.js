@@ -8,7 +8,7 @@ export const useWritingSession = () => {
   const [currentSession, setCurrentSession] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-
+  
   // Auto-save functionality
   const autoSaveTimeoutRef = useRef(null);
   const lastSavedContentRef = useRef('');
@@ -31,7 +31,11 @@ export const useWritingSession = () => {
       const response = await fetch(`${API_BASE_URL}/writing-sessions/create`, {
         method: 'POST',
         headers: getAuthHeaders(),
-        body: JSON.stringify({ emailType, setupData, confidenceBefore })
+        body: JSON.stringify({
+          emailType,
+          setupData,
+          confidenceBefore
+        })
       });
 
       const data = await response.json();
@@ -57,6 +61,7 @@ export const useWritingSession = () => {
   const getActiveSession = async () => {
     try {
       setIsLoading(true);
+      
       const response = await fetch(`${API_BASE_URL}/writing-sessions/active`, {
         headers: getAuthHeaders()
       });
@@ -93,7 +98,10 @@ export const useWritingSession = () => {
       const response = await fetch(`${API_BASE_URL}/writing-sessions/${currentSession.sessionId}/auto-save`, {
         method: 'PUT',
         headers: getAuthHeaders(),
-        body: JSON.stringify({ userDraftContent: content, flowTimeSeconds })
+        body: JSON.stringify({
+          userDraftContent: content,
+          flowTimeSeconds
+        })
       });
 
       if (response.ok) {
@@ -109,7 +117,7 @@ export const useWritingSession = () => {
           wordCount: data.wordCount,
           flowTimeSeconds
         }));
-        
+
         return { success: true, data };
       } else {
         console.error('Auto-save failed:', await response.json());
@@ -127,7 +135,7 @@ export const useWritingSession = () => {
     if (autoSaveTimeoutRef.current) {
       clearTimeout(autoSaveTimeoutRef.current);
     }
-    
+
     // Set new timeout for auto-save
     autoSaveTimeoutRef.current = setTimeout(() => {
       autoSaveDraft(content, flowTimeSeconds);
@@ -170,6 +178,7 @@ export const useWritingSession = () => {
 
     try {
       setIsLoading(true);
+
       const response = await fetch(`${API_BASE_URL}/writing-sessions/${currentSession.sessionId}/complete`, {
         method: 'PUT',
         headers: getAuthHeaders(),
@@ -190,8 +199,14 @@ export const useWritingSession = () => {
         if (autoSaveTimeoutRef.current) {
           clearTimeout(autoSaveTimeoutRef.current);
         }
-        
-        return { success: true, data: { ...data.session, confidenceGain: data.session.confidenceGain } };
+
+        return { 
+          success: true, 
+          data: {
+            ...data.session,
+            confidenceGain: data.session.confidenceGain
+          }
+        };
       } else {
         setError(data.error || 'Failed to complete session');
         return { success: false, error: data.error };
@@ -223,7 +238,7 @@ export const useWritingSession = () => {
         if (autoSaveTimeoutRef.current) {
           clearTimeout(autoSaveTimeoutRef.current);
         }
-        
+
         return { success: true };
       } else {
         setError(data.error || 'Failed to abandon session');

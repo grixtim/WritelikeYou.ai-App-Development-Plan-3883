@@ -5,20 +5,20 @@ import { useAuth } from '../contexts/AuthContext';
 import SafeIcon from '../common/SafeIcon';
 import * as FiIcons from 'react-icons/fi';
 
-const { FiHeart, FiEdit3, FiUsers, FiArrowRight, FiStar, FiCheckCircle } = FiIcons;
+const { FiBrain, FiEdit3, FiUsers, FiArrowRight, FiStar, FiCheckCircle } = FiIcons;
 
 const HomePage = () => {
   const { user } = useAuth();
 
   const features = [
     {
-      icon: FiHeart,
+      icon: FiBrain,
       title: "Write like you",
       description: "No templates or corporate speak. Just authentic emails that sound like the real you."
     },
     {
       icon: FiUsers,
-      title: "Connect with your people",
+      title: "Connect with your people", 
       description: "Reach your best-fit clients with messages that help them decide, not pressure them."
     },
     {
@@ -31,7 +31,7 @@ const HomePage = () => {
   const testimonials = [
     {
       name: "Sarah Chen",
-      role: "Course Creator",
+      role: "Course Creator", 
       quote: "Willy helped me find my voice again. My launch emails finally sound like me, not a sales robot."
     },
     {
@@ -53,16 +53,19 @@ const HomePage = () => {
           >
             <div className="flex items-center justify-center mb-6">
               <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
-                <SafeIcon icon={FiHeart} className="w-8 h-8 text-white" />
+                <SafeIcon icon={FiBrain} className="w-8 h-8 text-white" />
               </div>
             </div>
+            
             <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
               Write emails that feel like{' '}
               <span className="gradient-text">you</span>
             </h1>
+            
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
               Meet Willy, your warm AI writing buddy who helps you craft authentic launch emails that connect with your best-fit clients. No corporate speak, just your genuine voice.
             </p>
+            
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               {user ? (
                 <Link to="/dashboard">
@@ -120,6 +123,7 @@ const HomePage = () => {
               Forget high-pressure sales tactics. Focus on authentic connection and helping your best-fit clients make confident decisions.
             </p>
           </motion.div>
+
           <div className="grid md:grid-cols-3 gap-8">
             {features.map((feature, index) => (
               <motion.div
@@ -162,22 +166,23 @@ const HomePage = () => {
               A simple, supportive process that builds your confidence with every email.
             </p>
           </motion.div>
+
           <div className="space-y-12">
             {[
               {
                 step: "1",
                 title: "Share your story",
-                description: "Tell Willy about your offer and the people you love working with. No corporate jargon needed."
+                description: "Tell me about your offer and the people you love working with. No corporate jargon needed."
               },
               {
-                step: "2",
+                step: "2", 
                 title: "Get your magic prompt",
-                description: "Willy creates a personalized writing prompt that sparks authentic ideas and builds confidence."
+                description: "I'll create a personalized writing prompt that sparks authentic ideas and builds confidence."
               },
               {
                 step: "3",
-                title: "Write and celebrate",
-                description: "Draft your email with Willy's gentle guidance, then celebrate shipping something real and you."
+                title: "Write and celebrate", 
+                description: "Draft your email with my gentle guidance, then celebrate shipping something real and you."
               }
             ].map((item, index) => (
               <motion.div
@@ -219,6 +224,7 @@ const HomePage = () => {
               Writers who found their voice
             </h2>
           </motion.div>
+
           <div className="grid md:grid-cols-2 gap-8">
             {testimonials.map((testimonial, index) => (
               <motion.div
@@ -260,9 +266,8 @@ const HomePage = () => {
             Ready to write like you?
           </h2>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Join Willy for a writing experience that builds confidence, not anxiety. Your authentic voice is exactly what your best-fit clients want to hear.
+            Join me for a writing experience that builds confidence, not anxiety. Your authentic voice is exactly what your best-fit clients want to hear.
           </p>
-          
           <Link to={user ? "/dashboard" : "/signup"}>
             <motion.button
               whileHover={{ scale: 1.05 }}

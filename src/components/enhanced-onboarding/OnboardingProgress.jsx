@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 
 const OnboardingProgress = ({ currentStep, totalSteps }) => {
   const progress = (currentStep / totalSteps) * 100;
-  
+
   return (
     <div className="mb-8">
       <div className="flex justify-between items-center mb-2">
@@ -15,7 +15,7 @@ const OnboardingProgress = ({ currentStep, totalSteps }) => {
         </span>
       </div>
       <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-        <motion.div 
+        <motion.div
           className="h-full bg-gradient-to-r from-blue-500 to-purple-600"
           initial={{ width: 0 }}
           animate={{ width: `${progress}%` }}

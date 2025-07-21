@@ -11,12 +11,12 @@ const WillyAssistant = () => {
   const [conversation, setConversation] = useState([
     {
       type: 'willy',
-      content: "Hey there! I'm Willy, your writing buddy. I'm here to help you write emails that feel authentically you. What's on your mind today?",
+      content: "Hey there! I'm here to help you write emails that feel authentically you. What's on your mind today?",
       timestamp: new Date()
     }
   ]);
 
-  const willyResponses = [
+  const myResponses = [
     "That's a great question! Remember, your best-fit clients want to hear your authentic voice, not perfect copy.",
     "I love that you're thinking about this! Let's focus on helping people decide, not on being perfect.",
     "You're doing amazing! Trust yourself - you know your people better than any template ever could.",
@@ -33,13 +33,13 @@ const WillyAssistant = () => {
       timestamp: new Date()
     };
 
-    const willyResponse = {
+    const myResponse = {
       type: 'willy',
-      content: willyResponses[Math.floor(Math.random() * willyResponses.length)],
+      content: myResponses[Math.floor(Math.random() * myResponses.length)],
       timestamp: new Date()
     };
 
-    setConversation(prev => [...prev, userMessage, willyResponse]);
+    setConversation(prev => [...prev, userMessage, myResponse]);
     setMessage('');
   };
 
@@ -87,17 +87,12 @@ const WillyAssistant = () => {
             {/* Messages */}
             <div className="flex-1 overflow-y-auto p-4 space-y-3">
               {conversation.map((msg, index) => (
-                <div
-                  key={index}
-                  className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div
-                    className={`max-w-xs px-3 py-2 rounded-2xl text-sm ${
-                      msg.type === 'user'
-                        ? 'bg-blue-500 text-white'
-                        : 'bg-gray-100 text-gray-800'
-                    }`}
-                  >
+                <div key={index} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+                  <div className={`max-w-xs px-3 py-2 rounded-2xl text-sm ${
+                    msg.type === 'user'
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-gray-100 text-gray-800'
+                  }`}>
                     {msg.content}
                   </div>
                 </div>
@@ -112,7 +107,7 @@ const WillyAssistant = () => {
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                  placeholder="Ask Willy anything..."
+                  placeholder="Ask me anything..."
                   className="flex-1 px-3 py-2 border border-gray-200 rounded-full text-sm focus:outline-none focus:border-blue-500"
                 />
                 <button

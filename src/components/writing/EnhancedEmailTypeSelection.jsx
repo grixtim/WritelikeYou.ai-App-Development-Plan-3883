@@ -52,8 +52,7 @@ const EnhancedEmailTypeSelection = ({ onTypeSelected }) => {
     onTypeSelected(typeData);
   };
 
-  const isValid = selectedType && 
-    (selectedType !== 'belief_shifting' || beliefToShift.trim());
+  const isValid = selectedType && (selectedType !== 'belief_shifting' || beliefToShift.trim());
 
   return (
     <div className="bg-white rounded-3xl shadow-xl p-8 md:p-12">
@@ -135,7 +134,7 @@ const EnhancedEmailTypeSelection = ({ onTypeSelected }) => {
               className="w-full px-4 py-3 border border-orange-200 rounded-xl focus:outline-none focus:border-orange-500 bg-white text-gray-900 placeholder-gray-500"
             />
             <p className="text-xs text-orange-700 mt-2">
-              💡 Think about what your best-fit clients tell themselves that keeps them stuck
+              💡 My tip: Think about what your best-fit clients tell themselves that keeps them stuck
             </p>
           </div>
         </motion.div>
@@ -201,8 +200,7 @@ const EnhancedEmailTypeSelection = ({ onTypeSelected }) => {
 
       <div className="mt-8 p-4 bg-blue-50 rounded-xl">
         <p className="text-sm text-blue-700 text-center">
-          💡 <strong>Willy's tip:</strong> Each email type has its own psychology and purpose. 
-          Once you pick one, I'll share some insights that'll make your writing way more effective!
+          💡 <strong>My tip:</strong> Each email type has its own psychology and purpose. Once you pick one, I'll share some insights that'll make your writing way more effective!
         </p>
       </div>
 

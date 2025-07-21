@@ -69,7 +69,7 @@ const CopyFeedbackSystem = ({ emailContent, emailType, onComplete }) => {
             <SafeIcon icon={FiLoader} className="w-8 h-8 text-white animate-spin" />
           </div>
           <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            Willy's reading your draft...
+            I'm reading your draft...
           </h2>
           <p className="text-lg text-gray-600">
             Looking for what's working well and where you might strengthen it
@@ -80,7 +80,7 @@ const CopyFeedbackSystem = ({ emailContent, emailType, onComplete }) => {
   }
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className="bg-white rounded-3xl shadow-xl p-8 md:p-12"
@@ -117,7 +117,6 @@ const CopyFeedbackSystem = ({ emailContent, emailType, onComplete }) => {
           <SafeIcon icon={FiStar} className="w-5 h-5 text-yellow-500 mr-2" />
           Here's what you're already doing brilliantly:
         </h3>
-        
         <div className="space-y-4">
           {feedback.strengths.map((strength, index) => (
             <div key={index} className="bg-green-50 rounded-xl p-5">
@@ -135,12 +134,8 @@ const CopyFeedbackSystem = ({ emailContent, emailType, onComplete }) => {
       {/* Suggestions Section */}
       <div className="mb-8">
         <h3 className="text-xl font-semibold text-gray-900 mb-4">
-          {feedback.suggestions.length > 0 
-            ? "To make it even stronger:"
-            : "This is already strong as is!"
-          }
+          {feedback.suggestions.length > 0 ? "To make it even stronger:" : "This is already strong as is!"}
         </h3>
-        
         {feedback.suggestions.length > 0 && (
           <div className="space-y-4">
             {feedback.suggestions.map((suggestion, index) => (
@@ -170,11 +165,10 @@ const CopyFeedbackSystem = ({ emailContent, emailType, onComplete }) => {
         </motion.button>
       </div>
 
-      {/* Willy's final encouragement */}
+      {/* My final encouragement */}
       <div className="mt-8 p-4 bg-blue-50 rounded-xl">
         <p className="text-sm text-blue-700 text-center">
-          💡 <strong>Willy's tip:</strong> Remember, your authentic voice is what makes your emails special. 
-          These suggestions are just options - trust your instincts about what feels right for you and your audience!
+          💡 <strong>My tip:</strong> Remember, your authentic voice is what makes your emails special. These suggestions are just options - trust your instincts about what feels right for you and your audience!
         </p>
       </div>
     </motion.div>

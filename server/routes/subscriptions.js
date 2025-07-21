@@ -3,7 +3,6 @@ import { body, validationResult } from 'express-validator';
 import stripe, { PRODUCTS } from '../config/stripe.js';
 import User from '../models/User.js';
 import { authenticateToken } from '../middleware/auth.js';
-import { sendSubscriptionConfirmationEmail } from '../services/emailService.js';
 
 const router = express.Router();
 
@@ -81,11 +80,6 @@ router.post('/create', [
       // Get payment method details
       const paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId);
       
-      // Get plan details for email
-      const plan = priceId === PRODUCTS.MONTHLY.PRICE_ID ? 
-        { name: 'Monthly', price: 29, interval: 'month' } :
-        { name: 'Annual', price: 290, interval: 'year' };
-      
       // Update user with subscription details
       user.stripeSubscriptionId = subscription.id;
       user.stripePriceId = priceId;
@@ -113,26 +107,6 @@ router.post('/create', [
       });
       
       await user.save();
-      
-      // Send confirmation email (only if payment is already successful or for free trials)
-      if (subscription.status === 'active' || subscription.status === 'trialing') {
-        try {
-          await sendSubscriptionConfirmationEmail(user.email, {
-            name: billingDetails?.name || user.email.split('@')[0],
-            plan: plan.name,
-            price: plan.price,
-            interval: plan.interval,
-            startDate: new Date().toLocaleDateString(),
-            paymentMethod: {
-              brand: paymentMethod.card.brand,
-              last4: paymentMethod.card.last4
-            }
-          });
-        } catch (emailError) {
-          console.error('Error sending confirmation email:', emailError);
-          // Don't fail the request if email sending fails
-        }
-      }
       
       // Return client secret for payment confirmation
       return res.json({
@@ -299,37 +273,6 @@ router.get('/details', async (req, res) => {
   try {
     const user = req.user;
     
-    // Special handling for beta users - show beta status but also allow conversion
-    if (user.subscriptionStatus === 'beta_access') {
-      const now = new Date();
-      const betaEndDate = user.betaExpiresAt ? new Date(user.betaExpiresAt) : null;
-      const isExpired = betaEndDate && now > betaEndDate;
-      
-      // Calculate grace period
-      let inGracePeriod = false;
-      let gracePeriodDays = 0;
-      
-      if (isExpired && betaEndDate) {
-        const gracePeriodEnd = new Date(betaEndDate);
-        gracePeriodEnd.setDate(gracePeriodEnd.getDate() + 7); // 7-day grace period
-        
-        inGracePeriod = now < gracePeriodEnd;
-        if (inGracePeriod) {
-          gracePeriodDays = Math.ceil((gracePeriodEnd - now) / (1000 * 60 * 60 * 24));
-        }
-      }
-      
-      return res.json({
-        active: !isExpired,
-        status: 'beta_access',
-        betaExpiresAt: user.betaExpiresAt,
-        isExpired,
-        inGracePeriod,
-        gracePeriodDays,
-        message: user.getSubscriptionMessage()
-      });
-    }
-    
     if (!user.stripeSubscriptionId) {
       return res.json({ 
         active: false,
@@ -386,51 +329,6 @@ router.get('/details', async (req, res) => {
   } catch (error) {
     console.error('Server error in subscription details:', error);
     res.status(500).json({ error: 'Server error retrieving subscription details' });
-  }
-});
-
-// Get beta status (specifically for beta users)
-router.get('/beta-status', async (req, res) => {
-  try {
-    const user = req.user;
-    
-    if (user.subscriptionStatus !== 'beta_access') {
-      return res.json({ 
-        isBetaUser: false
-      });
-    }
-    
-    const now = new Date();
-    const betaEndDate = user.betaExpiresAt ? new Date(user.betaExpiresAt) : null;
-    const isExpired = betaEndDate && now > betaEndDate;
-    
-    // Calculate grace period
-    let inGracePeriod = false;
-    let gracePeriodDays = 0;
-    
-    if (isExpired && betaEndDate) {
-      const gracePeriodEnd = new Date(betaEndDate);
-      gracePeriodEnd.setDate(gracePeriodEnd.getDate() + 7); // 7-day grace period
-      
-      inGracePeriod = now < gracePeriodEnd;
-      if (inGracePeriod) {
-        gracePeriodDays = Math.ceil((gracePeriodEnd - now) / (1000 * 60 * 60 * 24));
-      }
-    }
-    
-    return res.json({
-      isBetaUser: true,
-      betaExpiresAt: user.betaExpiresAt,
-      isExpired,
-      inGracePeriod,
-      gracePeriodDays,
-      message: user.getSubscriptionMessage(),
-      betaCode: user.betaAccessCode
-    });
-    
-  } catch (error) {
-    console.error('Server error in beta status check:', error);
-    res.status(500).json({ error: 'Server error checking beta status' });
   }
 });
 

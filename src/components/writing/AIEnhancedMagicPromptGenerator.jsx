@@ -7,31 +7,21 @@ import * as FiIcons from 'react-icons/fi';
 
 const { FiSpark, FiRefreshCw, FiArrowRight, FiLoader } = FiIcons;
 
-const AIEnhancedMagicPromptGenerator = ({ 
-  user, 
-  emailType, 
-  beliefToShift, 
-  additionalContext, 
-  confidenceLevel,
-  onPromptGenerated 
-}) => {
+const AIEnhancedMagicPromptGenerator = ({ user, emailType, beliefToShift, additionalContext, confidenceLevel, onPromptGenerated }) => {
   const { trackMagicPromptMoment } = useAnalytics();
   const [currentPrompt, setCurrentPrompt] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
 
   const generatePrompt = async () => {
     setIsGenerating(true);
-    
     try {
       const response = await willyAPI.generateMagicPrompt(
-        emailType, 
-        user.enhancedOffer || user, 
-        confidenceLevel, 
+        emailType,
+        user.enhancedOffer || user,
+        confidenceLevel,
         additionalContext
       );
-      
       setCurrentPrompt(response);
-      
       trackMagicPromptMoment({
         type: response.type,
         emailType: emailType,
@@ -71,9 +61,7 @@ const AIEnhancedMagicPromptGenerator = ({
           Let's create your magic prompt
         </h2>
         <p className="text-lg text-gray-600 leading-relaxed">
-          Based on everything you've shared about your {user?.enhancedOffer?.offerName || 'offer'} and 
-          that you're writing a {emailType.replace('_', ' ')} email, I'll generate a personalized 
-          writing prompt that sparks authentic ideas.
+          Based on everything you've shared about your {user?.enhancedOffer?.offerName || 'offer'} and that you're writing a {emailType.replace('_', ' ')} email, I'll generate a personalized writing prompt that sparks authentic ideas.
         </p>
       </div>
 
@@ -113,7 +101,7 @@ const AIEnhancedMagicPromptGenerator = ({
             {isGenerating ? (
               <div className="flex items-center space-x-2">
                 <SafeIcon icon={FiLoader} className="w-5 h-5 animate-spin" />
-                <span>Willy's creating your magic prompt...</span>
+                <span>I'm creating your magic prompt...</span>
               </div>
             ) : (
               <div className="flex items-center space-x-2">
@@ -172,8 +160,7 @@ const AIEnhancedMagicPromptGenerator = ({
 
       <div className="mt-8 p-4 bg-blue-50 rounded-xl">
         <p className="text-sm text-blue-700 text-center">
-          💡 <strong>Willy's tip:</strong> The best prompts feel a little scary and exciting at the same time. 
-          If this prompt makes you think "I could write about that," you're on the right track!
+          💡 <strong>My tip:</strong> The best prompts feel a little scary and exciting at the same time. If this prompt makes you think "I could write about that," you're on the right track!
         </p>
       </div>
     </div>

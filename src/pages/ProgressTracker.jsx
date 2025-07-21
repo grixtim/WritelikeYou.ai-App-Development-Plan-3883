@@ -4,7 +4,7 @@ import { useUser } from '../contexts/UserContext';
 import SafeIcon from '../common/SafeIcon';
 import * as FiIcons from 'react-icons/fi';
 
-const { FiTrendingUp, FiTarget, FiEdit3, FiCalendar, FiStar, FiHeart } = FiIcons;
+const { FiTrendingUp, FiTarget, FiEdit3, FiCalendar, FiStar, FiBrain } = FiIcons;
 
 const ProgressTracker = () => {
   const { user, userProgress } = useUser();
@@ -42,7 +42,7 @@ const ProgressTracker = () => {
     {
       title: 'Voice Finder',
       description: 'You completed 5 writing sessions',
-      icon: FiHeart,
+      icon: FiBrain,
       unlocked: userProgress.emailsWritten >= 5,
       color: 'from-red-400 to-pink-500'
     },
@@ -129,7 +129,7 @@ const ProgressTracker = () => {
         <div className="h-64 flex items-end justify-between space-x-2">
           {confidenceHistory.map((point, index) => (
             <div key={index} className="flex-1 flex flex-col items-center">
-              <div 
+              <div
                 className="w-full bg-gradient-to-t from-blue-500 to-purple-600 rounded-t-lg transition-all duration-1000"
                 style={{ height: `${(point.score / 10) * 100}%` }}
               />
@@ -164,20 +164,14 @@ const ProgressTracker = () => {
                   : 'border-gray-200 bg-gray-50 text-gray-400'
               }`}
             >
-              <SafeIcon 
-                icon={achievement.icon} 
-                className={`w-8 h-8 mb-4 ${
-                  achievement.unlocked ? 'text-white' : 'text-gray-400'
-                }`} 
+              <SafeIcon
+                icon={achievement.icon}
+                className={`w-8 h-8 mb-4 ${achievement.unlocked ? 'text-white' : 'text-gray-400'}`}
               />
-              <h3 className={`font-semibold mb-2 ${
-                achievement.unlocked ? 'text-white' : 'text-gray-600'
-              }`}>
+              <h3 className={`font-semibold mb-2 ${achievement.unlocked ? 'text-white' : 'text-gray-600'}`}>
                 {achievement.title}
               </h3>
-              <p className={`text-sm ${
-                achievement.unlocked ? 'text-white/80' : 'text-gray-500'
-              }`}>
+              <p className={`text-sm ${achievement.unlocked ? 'text-white/80' : 'text-gray-500'}`}>
                 {achievement.description}
               </p>
               {achievement.unlocked && (
@@ -191,7 +185,7 @@ const ProgressTracker = () => {
         </div>
       </motion.div>
 
-      {/* Willy's Reflection */}
+      {/* My Reflection */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -203,12 +197,9 @@ const ProgressTracker = () => {
             <span className="text-white font-semibold">W</span>
           </div>
           <div>
-            <h3 className="font-semibold text-blue-900 mb-2">Willy's reflection</h3>
+            <h3 className="font-semibold text-blue-900 mb-2">My reflection</h3>
             <p className="text-blue-700 leading-relaxed">
-              Look at this progress, {user?.name}! You're not just writing more emails - 
-              you're building trust in your authentic voice. Each email you ship is proof 
-              that you don't need to be perfect to connect with your best-fit clients. 
-              Keep going - your voice matters more than you know.
+              Look at this progress, {user?.name}! You're not just writing more emails - you're building trust in your authentic voice. Each email you ship is proof that you don't need to be perfect to connect with your best-fit clients. Keep going - your voice matters more than you know.
             </p>
           </div>
         </div>

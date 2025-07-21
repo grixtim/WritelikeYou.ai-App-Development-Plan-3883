@@ -9,7 +9,6 @@ const { FiPackage, FiArrowRight } = FiIcons;
 
 const OfferNameStep = ({ data, onUpdate }) => {
   const [offerName, setOfferName] = useState(data.offerName || '');
-  
   const currentStep = 1;
   const totalSteps = 7;
 
@@ -24,7 +23,7 @@ const OfferNameStep = ({ data, onUpdate }) => {
       className="bg-white rounded-3xl shadow-xl p-8 md:p-12"
     >
       <OnboardingProgress currentStep={currentStep} totalSteps={totalSteps} />
-
+      
       <div className="text-center mb-8">
         <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
           <SafeIcon icon={FiPackage} className="w-8 h-8 text-white" />
@@ -33,8 +32,7 @@ const OfferNameStep = ({ data, onUpdate }) => {
           What's the name of your offer?
         </h1>
         <p className="text-lg text-gray-600 leading-relaxed">
-          This could be your coaching program, course, or service. Don't worry about making it perfect - 
-          we just need to know what we're talking about!
+          This could be your coaching program, course, or service. Don't worry about making it perfect - I just need to know what we're talking about!
         </p>
       </div>
 
@@ -70,8 +68,7 @@ const OfferNameStep = ({ data, onUpdate }) => {
 
       <div className="mt-8 p-4 bg-blue-50 rounded-xl">
         <p className="text-sm text-blue-700 text-center">
-          💡 <strong>Willy's tip:</strong> Don't overthink this! I just need to know what to call your offer 
-          so I can help you write emails that genuinely connect with your best-fit clients.
+          💡 <strong>My tip:</strong> Don't overthink this! I just need to know what to call your offer so I can help you write emails that genuinely connect with your best-fit clients.
         </p>
       </div>
     </motion.div>

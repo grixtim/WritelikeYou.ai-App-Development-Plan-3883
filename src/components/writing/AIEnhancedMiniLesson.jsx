@@ -49,6 +49,7 @@ const AIEnhancedMiniLesson = ({ emailType, setupData, additionalContext, onLesso
         content: "Cart close emails help people imagine two futures - one where they take action and one where they don't. The key is emotional connection to their desired future, not pressure tactics."
       }
     };
+
     return defaultLessons[type] || defaultLessons.cart_open;
   };
 
@@ -57,7 +58,7 @@ const AIEnhancedMiniLesson = ({ emailType, setupData, additionalContext, onLesso
   };
 
   const handleQuestionSubmit = () => {
-    alert(`Great question! Willy would respond to: "${clarificationQuestion}"`);
+    alert(`Great question! I would respond to: "${clarificationQuestion}"`);
     setClarificationQuestion('');
     setShowClarificationInput(false);
   };
@@ -80,7 +81,7 @@ const AIEnhancedMiniLesson = ({ emailType, setupData, additionalContext, onLesso
             <SafeIcon icon={FiLoader} className="w-8 h-8 text-white animate-spin" />
           </div>
           <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            Willy's preparing your personalized mini-lesson...
+            I'm preparing your personalized mini-lesson...
           </h2>
           <p className="text-gray-600">
             Connecting the psychology to your specific situation
@@ -147,7 +148,7 @@ const AIEnhancedMiniLesson = ({ emailType, setupData, additionalContext, onLesso
               className="flex items-center space-x-2 px-6 py-3 border border-gray-200 rounded-xl font-medium text-gray-700 hover:bg-gray-50 transition-all mx-auto"
             >
               <SafeIcon icon={FiMessageCircle} className="w-4 h-4" />
-              <span>Ask Willy a clarifying question</span>
+              <span>Ask me a clarifying question</span>
             </button>
           </div>
         ) : (
@@ -213,8 +214,7 @@ const AIEnhancedMiniLesson = ({ emailType, setupData, additionalContext, onLesso
 
       <div className="mt-8 p-4 bg-blue-50 rounded-xl">
         <p className="text-sm text-blue-700 text-center">
-          💡 <strong>Willy's tip:</strong> Keep this lesson in mind as you write. The psychology behind 
-          your email type will guide you toward more authentic and effective messaging.
+          💡 <strong>My tip:</strong> Keep this lesson in mind as you write. The psychology behind your email type will guide you toward more authentic and effective messaging.
         </p>
       </div>
     </div>

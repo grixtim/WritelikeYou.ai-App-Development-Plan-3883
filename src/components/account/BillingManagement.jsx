@@ -2,22 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../../contexts/AuthContext';
 import SafeIcon from '../../common/SafeIcon';
-import PaymentMethodForm from './PaymentMethodForm';
-import ConfirmCancellationModal from './ConfirmCancellationModal';
-import PlanSelection from './PlanSelection';
 import * as FiIcons from 'react-icons/fi';
 
-const { 
-  FiCreditCard, 
-  FiCalendar, 
-  FiRefreshCw, 
-  FiExternalLink, 
-  FiAlertCircle, 
-  FiCheck, 
-  FiLoader,
-  FiArrowRight,
-  FiShield
-} = FiIcons;
+const { FiCreditCard, FiCalendar, FiRefreshCw, FiExternalLink, FiAlertCircle, FiCheck, FiLoader } = FiIcons;
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
@@ -27,9 +14,6 @@ const BillingManagement = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [processing, setProcessing] = useState(false);
-  const [showUpdatePayment, setShowUpdatePayment] = useState(false);
-  const [showCancellationModal, setShowCancellationModal] = useState(false);
-  const [showChangePlan, setShowChangePlan] = useState(false);
 
   useEffect(() => {
     fetchSubscriptionDetails();
@@ -39,17 +23,17 @@ const BillingManagement = () => {
     try {
       setLoading(true);
       setError(null);
-
+      
       const token = localStorage.getItem('authToken');
       if (!token) throw new Error('Not authenticated');
-
+      
       const response = await fetch(`${API_BASE_URL}/subscriptions/details`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
       });
-
+      
       if (response.ok) {
         const data = await response.json();
         setSubscription(data);
@@ -66,15 +50,17 @@ const BillingManagement = () => {
   };
 
   const handleCancelSubscription = async () => {
-    setShowCancellationModal(false);
+    if (!confirm('Are you sure you want to cancel your subscription? You\'ll still have access until the end of your billing period.')) {
+      return;
+    }
     
     try {
       setProcessing(true);
       setError(null);
-
+      
       const token = localStorage.getItem('authToken');
       if (!token) throw new Error('Not authenticated');
-
+      
       const response = await fetch(`${API_BASE_URL}/subscriptions/cancel`, {
         method: 'POST',
         headers: {
@@ -82,7 +68,7 @@ const BillingManagement = () => {
           'Content-Type': 'application/json',
         },
       });
-
+      
       if (response.ok) {
         const data = await response.json();
         setSubscription({
@@ -107,17 +93,17 @@ const BillingManagement = () => {
     try {
       setProcessing(true);
       setError(null);
-
+      
       const token = localStorage.getItem('authToken');
       if (!token) throw new Error('Not authenticated');
-
+      
       const response = await fetch(`${API_BASE_URL}/subscriptions/billing-portal`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
       });
-
+      
       if (response.ok) {
         const data = await response.json();
         // Open Stripe billing portal in new tab
@@ -134,14 +120,9 @@ const BillingManagement = () => {
     }
   };
 
-  const handlePaymentMethodUpdated = () => {
-    setShowUpdatePayment(false);
-    fetchSubscriptionDetails();
-  };
-
   const getStatusBadge = () => {
     if (!subscription) return null;
-
+    
     switch (subscription.status) {
       case 'active':
         return <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Active</span>;
@@ -208,15 +189,10 @@ const BillingManagement = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="px-8 py-4 bg-gradient-to-br from-blue-500 to-purple-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all"
-              onClick={() => setShowChangePlan(true)}
             >
               Subscribe Now
             </motion.button>
           </div>
-        )}
-        
-        {showChangePlan && (
-          <PlanSelection onClose={() => setShowChangePlan(false)} onSuccess={fetchSubscriptionDetails} />
         )}
       </div>
     );
@@ -228,7 +204,7 @@ const BillingManagement = () => {
         <h2 className="text-2xl font-bold text-gray-900">Subscription Details</h2>
         {getStatusBadge()}
       </div>
-
+      
       <div className="grid md:grid-cols-2 gap-8 mb-8">
         <div className="bg-gray-50 rounded-2xl p-6">
           <h3 className="font-semibold text-gray-900 mb-4">Plan Details</h3>
@@ -251,22 +227,20 @@ const BillingManagement = () => {
             <div className="flex justify-between">
               <span className="text-gray-600">Renewal Date</span>
               <span className="font-medium">
-                {subscription.currentPeriodEnd
-                  ? new Date(subscription.currentPeriodEnd).toLocaleDateString()
-                  : 'N/A'}
+                {subscription.currentPeriodEnd ? new Date(subscription.currentPeriodEnd).toLocaleDateString() : 'N/A'}
               </span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">Status</span>
               <span className="font-medium">
-                {subscription.cancelAtPeriodEnd
-                  ? 'Cancels on renewal date'
+                {subscription.cancelAtPeriodEnd 
+                  ? 'Cancels on renewal date' 
                   : subscription.status.charAt(0).toUpperCase() + subscription.status.slice(1)}
               </span>
             </div>
           </div>
         </div>
-
+        
         <div className="bg-gray-50 rounded-2xl p-6">
           <h3 className="font-semibold text-gray-900 mb-4">Payment Method</h3>
           {subscription.paymentMethod ? (
@@ -289,57 +263,43 @@ const BillingManagement = () => {
           )}
         </div>
       </div>
-
+      
       {/* Warning for past due accounts */}
       {subscription.status === 'past_due' && (
         <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-8">
           <div className="flex items-start space-x-3">
-            <SafeIcon
-              icon={FiAlertCircle}
-              className="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5"
-            />
+            <SafeIcon icon={FiAlertCircle} className="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5" />
             <div>
               <h4 className="font-semibold text-yellow-800">Payment Issue Detected</h4>
               <p className="text-yellow-700 text-sm mt-1">
-                Your last payment failed. Please update your payment method to avoid service
-                interruption.
+                Your last payment failed. Please update your payment method to avoid service interruption.
               </p>
             </div>
           </div>
         </div>
       )}
-
-      {/* Action Buttons */}
+      
+      {/* Actions */}
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
         <motion.button
-          onClick={() => setShowUpdatePayment(true)}
+          onClick={handleManagePaymentMethod}
           disabled={processing}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           className="px-6 py-3 bg-gradient-to-br from-blue-500 to-purple-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all flex items-center justify-center space-x-2"
         >
           <SafeIcon icon={FiCreditCard} className="w-5 h-5" />
-          <span>Update Payment Method</span>
-        </motion.button>
-        
-        <motion.button
-          onClick={handleManagePaymentMethod}
-          disabled={processing}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="px-6 py-3 bg-white border border-gray-200 text-gray-700 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all flex items-center justify-center space-x-2"
-        >
-          <SafeIcon icon={FiExternalLink} className="w-5 h-5" />
-          <span>Billing Portal</span>
+          <span>Manage Payment Method</span>
+          <SafeIcon icon={FiExternalLink} className="w-4 h-4 ml-1" />
         </motion.button>
         
         {!subscription.cancelAtPeriodEnd && subscription.status !== 'canceled' && (
           <motion.button
-            onClick={() => setShowCancellationModal(true)}
+            onClick={handleCancelSubscription}
             disabled={processing}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="px-6 py-3 bg-white border border-gray-200 text-red-600 rounded-xl font-semibold shadow-lg hover:shadow-xl hover:bg-red-50 hover:border-red-200 transition-all flex items-center justify-center space-x-2"
+            className="px-6 py-3 bg-white border border-gray-200 text-gray-700 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all flex items-center justify-center space-x-2"
           >
             {processing ? (
               <SafeIcon icon={FiLoader} className="w-5 h-5 animate-spin" />
@@ -350,37 +310,14 @@ const BillingManagement = () => {
           </motion.button>
         )}
       </div>
-
+      
       {subscription.cancelAtPeriodEnd && (
         <div className="mt-6 text-center">
           <p className="text-gray-600 text-sm">
-            Your subscription is set to cancel on{' '}
-            {new Date(subscription.currentPeriodEnd).toLocaleDateString()}. You'll continue to have
-            access until then.
+            Your subscription is set to cancel on {new Date(subscription.currentPeriodEnd).toLocaleDateString()}.
+            You'll continue to have access until then.
           </p>
         </div>
-      )}
-
-      {/* Update Payment Method Modal */}
-      {showUpdatePayment && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">Update Payment Method</h3>
-            <PaymentMethodForm 
-              onCancel={() => setShowUpdatePayment(false)}
-              onSuccess={handlePaymentMethodUpdated} 
-            />
-          </div>
-        </div>
-      )}
-
-      {/* Cancellation Confirmation Modal */}
-      {showCancellationModal && (
-        <ConfirmCancellationModal
-          onCancel={() => setShowCancellationModal(false)}
-          onConfirm={handleCancelSubscription}
-          subscription={subscription}
-        />
       )}
     </div>
   );

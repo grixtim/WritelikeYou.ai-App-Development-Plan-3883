@@ -1,7 +1,7 @@
 import express from 'express';
 import { body, validationResult } from 'express-validator';
 import WritingSession from '../models/WritingSession.js';
-import { authenticateToken, allowGracePeriodAccess } from '../middleware/auth.js';
+import { authenticateToken } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -12,26 +12,12 @@ router.use(authenticateToken);
 router.post('/create', [
   body('emailType').isIn(['cart_open', 'belief_shifting', 'social_proof', 'cart_close']),
   body('setupData').optional().isObject(),
-  body('confidenceBefore').optional().isInt({min: 1, max: 10})
+  body('confidenceBefore').optional().isInt({ min: 1, max: 10 })
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
-    }
-    
-    // Check for beta grace period - don't allow new sessions
-    if (req.user.subscriptionStatus === 'beta_access') {
-      const now = new Date();
-      const betaEndDate = req.user.betaExpiresAt ? new Date(req.user.betaExpiresAt) : null;
-      
-      if (betaEndDate && now > betaEndDate) {
-        return res.status(403).json({ 
-          error: 'Beta access has expired',
-          message: 'Your beta access has expired. Please upgrade to continue creating new emails.',
-          betaStatus: 'expired'
-        });
-      }
     }
 
     const { emailType, setupData = {}, confidenceBefore = 5 } = req.body;
@@ -78,6 +64,7 @@ router.post('/create', [
 router.get('/active', async (req, res) => {
   try {
     const session = await WritingSession.findActiveSession(req.user._id);
+    
     if (!session) {
       return res.status(404).json({ error: 'No active session found' });
     }
@@ -89,21 +76,16 @@ router.get('/active', async (req, res) => {
   }
 });
 
-// Get session by ID - allow in grace period
-router.get('/:sessionId', allowGracePeriodAccess, async (req, res) => {
+// Get session by ID
+router.get('/:sessionId', async (req, res) => {
   try {
-    const session = await WritingSession.findOne({ sessionId: req.params.sessionId, userId: req.user._id });
+    const session = await WritingSession.findOne({
+      sessionId: req.params.sessionId,
+      userId: req.user._id
+    });
+
     if (!session) {
       return res.status(404).json({ error: 'Session not found' });
-    }
-    
-    // If in grace period, add a flag to indicate view-only mode
-    if (req.user.inGracePeriod) {
-      return res.json({
-        session,
-        viewOnly: true,
-        message: 'Your beta access has expired. You can view existing emails but cannot edit them.'
-      });
     }
 
     res.json({ session });
@@ -122,20 +104,6 @@ router.put('/:sessionId/auto-save', [
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
-    }
-    
-    // Check for beta grace period - don't allow edits
-    if (req.user.subscriptionStatus === 'beta_access') {
-      const now = new Date();
-      const betaEndDate = req.user.betaExpiresAt ? new Date(req.user.betaExpiresAt) : null;
-      
-      if (betaEndDate && now > betaEndDate) {
-        return res.status(403).json({ 
-          error: 'Beta access has expired',
-          message: 'Your beta access has expired. Please upgrade to continue editing emails.',
-          betaStatus: 'expired'
-        });
-      }
     }
 
     const { userDraftContent, flowTimeSeconds } = req.body;
@@ -182,20 +150,6 @@ router.put('/:sessionId/progress', [
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-    
-    // Check for beta grace period - don't allow edits
-    if (req.user.subscriptionStatus === 'beta_access') {
-      const now = new Date();
-      const betaEndDate = req.user.betaExpiresAt ? new Date(req.user.betaExpiresAt) : null;
-      
-      if (betaEndDate && now > betaEndDate) {
-        return res.status(403).json({ 
-          error: 'Beta access has expired',
-          message: 'Your beta access has expired. Please upgrade to continue using this feature.',
-          betaStatus: 'expired'
-        });
-      }
-    }
 
     const updates = {};
     const allowedFields = ['currentStep', 'miniLessonContent', 'magicPromptGenerated', 'totalTimeSpent'];
@@ -207,7 +161,10 @@ router.put('/:sessionId/progress', [
     });
 
     const session = await WritingSession.findOneAndUpdate(
-      { sessionId: req.params.sessionId, userId: req.user._id },
+      {
+        sessionId: req.params.sessionId,
+        userId: req.user._id
+      },
       updates,
       { new: true, runValidators: true }
     );
@@ -216,7 +173,7 @@ router.put('/:sessionId/progress', [
       return res.status(404).json({ error: 'Session not found' });
     }
 
-    res.json({
+    res.json({ 
       message: 'Session progress updated',
       session: {
         sessionId: session.sessionId,
@@ -241,20 +198,6 @@ router.put('/:sessionId/complete', [
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
-    }
-    
-    // Check for beta grace period - don't allow edits
-    if (req.user.subscriptionStatus === 'beta_access') {
-      const now = new Date();
-      const betaEndDate = req.user.betaExpiresAt ? new Date(req.user.betaExpiresAt) : null;
-      
-      if (betaEndDate && now > betaEndDate) {
-        return res.status(403).json({ 
-          error: 'Beta access has expired',
-          message: 'Your beta access has expired. Please upgrade to continue using this feature.',
-          betaStatus: 'expired'
-        });
-      }
     }
 
     const { userDraftContent, confidenceAfter, userFeedback = {}, totalTimeSpent } = req.body;
@@ -317,12 +260,12 @@ router.put('/:sessionId/abandon', async (req, res) => {
   }
 });
 
-// Get user's session history - allow in grace period
-router.get('/history/list', allowGracePeriodAccess, async (req, res) => {
+// Get user's session history
+router.get('/history/list', async (req, res) => {
   try {
     const limit = Math.min(parseInt(req.query.limit) || 20, 100);
     const sessions = await WritingSession.getUserSessions(req.user._id, limit);
-    
+
     const sessionHistory = sessions.map(session => ({
       sessionId: session.sessionId,
       emailType: session.emailType,
@@ -334,15 +277,6 @@ router.get('/history/list', allowGracePeriodAccess, async (req, res) => {
       createdAt: session.createdAt,
       updatedAt: session.updatedAt
     }));
-    
-    // If in grace period, add a flag to indicate view-only mode
-    if (req.user.inGracePeriod) {
-      return res.json({
-        sessions: sessionHistory,
-        viewOnly: true,
-        message: 'Your beta access has expired. You can view existing emails but cannot create new ones.'
-      });
-    }
 
     res.json({ sessions: sessionHistory });
   } catch (error) {
@@ -352,14 +286,14 @@ router.get('/history/list', allowGracePeriodAccess, async (req, res) => {
 });
 
 // Get user analytics
-router.get('/analytics/summary', allowGracePeriodAccess, async (req, res) => {
+router.get('/analytics/summary', async (req, res) => {
   try {
     const dateRange = {};
     if (req.query.from) dateRange.from = req.query.from;
     if (req.query.to) dateRange.to = req.query.to;
 
     const analytics = await WritingSession.getSessionAnalytics(req.user._id, dateRange);
-
+    
     if (!analytics.length) {
       return res.json({
         totalSessions: 0,
@@ -378,9 +312,8 @@ router.get('/analytics/summary', allowGracePeriodAccess, async (req, res) => {
     data.emailTypeBreakdown.forEach(type => {
       emailTypeBreakdown[type] = (emailTypeBreakdown[type] || 0) + 1;
     });
-    
-    // If in grace period, add a flag to indicate view-only mode
-    const result = {
+
+    res.json({
       totalSessions: data.totalSessions,
       completedSessions: data.completedSessions,
       completionRate: data.totalSessions > 0 ? (data.completedSessions / data.totalSessions) * 100 : 0,
@@ -388,14 +321,7 @@ router.get('/analytics/summary', allowGracePeriodAccess, async (req, res) => {
       totalFlowTime: data.totalFlowTime,
       totalWordCount: data.totalWordCount,
       emailTypeBreakdown
-    };
-    
-    if (req.user.inGracePeriod) {
-      result.viewOnly = true;
-      result.message = 'Your beta access has expired. You can view analytics but cannot create new emails.';
-    }
-
-    res.json(result);
+    });
   } catch (error) {
     console.error('Get analytics error:', error);
     res.status(500).json({ error: 'Server error fetching analytics' });

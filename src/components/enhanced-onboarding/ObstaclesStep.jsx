@@ -10,7 +10,6 @@ const { FiAlertTriangle, FiArrowRight, FiArrowLeft, FiPlus, FiX } = FiIcons;
 const ObstaclesStep = ({ data, onUpdate }) => {
   const [commonObstacles, setCommonObstacles] = useState(data.commonObstacles || []);
   const [newObstacle, setNewObstacle] = useState('');
-  
   const currentStep = 4;
   const totalSteps = 7;
 
@@ -36,7 +35,7 @@ const ObstaclesStep = ({ data, onUpdate }) => {
       className="bg-white rounded-3xl shadow-xl p-8 md:p-12"
     >
       <OnboardingProgress currentStep={currentStep} totalSteps={totalSteps} />
-
+      
       <div className="text-center mb-8">
         <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
           <SafeIcon icon={FiAlertTriangle} className="w-8 h-8 text-white" />
@@ -54,7 +53,6 @@ const ObstaclesStep = ({ data, onUpdate }) => {
           <label className="block text-sm font-medium text-gray-700 mb-3">
             Common obstacles (add 3-5 key ones)
           </label>
-          
           <div className="space-y-2 mb-4">
             {commonObstacles.map((obstacle, index) => (
               <div key={index} className="flex items-center space-x-2 bg-red-50 px-3 py-2 rounded-lg">
@@ -68,7 +66,6 @@ const ObstaclesStep = ({ data, onUpdate }) => {
               </div>
             ))}
           </div>
-
           <div className="flex space-x-2">
             <input
               type="text"
@@ -95,6 +92,7 @@ const ObstaclesStep = ({ data, onUpdate }) => {
             <SafeIcon icon={FiArrowLeft} className="w-5 h-5" />
             <span>Back</span>
           </Link>
+
           <Link
             to="/enhanced-onboarding/results"
             onClick={handleContinue}
@@ -112,8 +110,7 @@ const ObstaclesStep = ({ data, onUpdate }) => {
 
       <div className="mt-8 p-4 bg-blue-50 rounded-xl">
         <p className="text-sm text-blue-700 text-center">
-          💡 <strong>Willy's tip:</strong> Think about the internal and external obstacles. 
-          What do they tell themselves? What patterns do they get stuck in?
+          💡 <strong>My tip:</strong> Think about the internal and external obstacles. What do they tell themselves? What patterns do they get stuck in?
         </p>
       </div>
     </motion.div>

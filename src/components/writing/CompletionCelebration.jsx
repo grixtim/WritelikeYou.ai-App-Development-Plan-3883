@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useUser } from '../../contexts/UserContext';
 import { useAnalytics } from '../../contexts/AnalyticsContext';
 import SafeIcon from '../../common/SafeIcon';
 import * as FiIcons from 'react-icons/fi';
 
-const { FiCheckCircle, FiEdit3, FiHome, FiHeart, FiZap, FiStar, FiTrendingUp, FiMail } = FiIcons;
+const { FiCheckCircle, FiEdit3, FiHome, FiBrain, FiZap, FiStar, FiTrendingUp } = FiIcons;
 
 const CompletionCelebration = ({ emailContent, sessionData, emailType, onStartNew }) => {
-  const navigate = useNavigate();
   const { user, userProgress, updateProgress } = useUser();
   const { trackEvent } = useAnalytics();
   const [showSuccessMetrics, setShowSuccessMetrics] = useState(false);
@@ -61,11 +60,6 @@ const CompletionCelebration = ({ emailContent, sessionData, emailType, onStartNe
     }
   };
 
-  const handleViewInLibrary = () => {
-    // Navigate to emails page with completed session ID as query parameter
-    navigate(`/emails?completed=${sessionData.sessionId || 'latest'}`);
-  };
-
   const getEmailTypeDisplayName = (type) => {
     const names = {
       cart_open: 'cart open announcement',
@@ -84,7 +78,7 @@ const CompletionCelebration = ({ emailContent, sessionData, emailType, onStartNe
     return `📝 Email #${count} complete`;
   };
 
-  const willyEncouragements = [
+  const myEncouragements = [
     "You did it! You leaned into what you naturally know about your clients and it created something that sounds exactly like you. That's the kind of email that actually moves people to action.",
     "Look at this! You trusted your voice and wrote something real. Your best-fit clients are going to feel that authenticity - and that's what helps them decide.",
     "This is exactly what I'm talking about - you wrote something that sounds like YOU, not like everyone else. That's copywriting gold right there.",
@@ -92,16 +86,11 @@ const CompletionCelebration = ({ emailContent, sessionData, emailType, onStartNe
     "Every time you ship something authentic like this, you're building that confidence muscle stronger. Your voice matters more than you know."
   ];
 
-  const selectedEncouragement = willyEncouragements[Math.floor(Math.random() * willyEncouragements.length)];
-
-  const formatTime = (seconds) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
+  const selectedEncouragement = myEncouragements[Math.floor(Math.random() * myEncouragements.length)];
 
   return (
     <div className="bg-white rounded-3xl shadow-xl p-8 md:p-12 text-center">
+      {/* Initial Celebration */}
       <motion.div
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
@@ -110,12 +99,12 @@ const CompletionCelebration = ({ emailContent, sessionData, emailType, onStartNe
       >
         <SafeIcon icon={FiCheckCircle} className="w-10 h-10 text-white" />
       </motion.div>
-      
+
       <h1 className="text-4xl font-bold text-gray-900 mb-6">
         {getMilestoneMessage(totalEmailsAfterThis)}
       </h1>
 
-      {/* Willy's Main Encouragement */}
+      {/* My Main Encouragement */}
       <div className="bg-blue-50 rounded-2xl p-6 mb-8">
         <div className="flex items-start space-x-4">
           <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
@@ -171,7 +160,7 @@ const CompletionCelebration = ({ emailContent, sessionData, emailType, onStartNe
               { key: 'inspired', label: 'Inspired', icon: FiZap },
               { key: 'energized', label: 'Energized', icon: FiStar },
               { key: 'confident', label: 'Confident', icon: FiTrendingUp },
-              { key: 'relieved', label: 'Relieved', icon: FiHeart }
+              { key: 'relieved', label: 'Relieved', icon: FiBrain }
             ].map((feeling) => (
               <button
                 key={feeling.key}
@@ -198,6 +187,7 @@ const CompletionCelebration = ({ emailContent, sessionData, emailType, onStartNe
             <p className="text-2xl font-bold text-gray-900">{wordCount}</p>
             <p className="text-sm text-gray-600">words written</p>
           </div>
+
           <div className="bg-green-50 rounded-2xl p-6">
             <SafeIcon icon={FiTrendingUp} className="w-8 h-8 text-green-500 mx-auto mb-2" />
             <p className="text-2xl font-bold text-gray-900">
@@ -205,11 +195,13 @@ const CompletionCelebration = ({ emailContent, sessionData, emailType, onStartNe
             </p>
             <p className="text-sm text-gray-600">confidence boost</p>
           </div>
+
           <div className="bg-purple-50 rounded-2xl p-6">
-            <SafeIcon icon={FiHeart} className="w-8 h-8 text-purple-500 mx-auto mb-2" />
+            <SafeIcon icon={FiBrain} className="w-8 h-8 text-purple-500 mx-auto mb-2" />
             <p className="text-2xl font-bold text-gray-900">{totalEmailsAfterThis}</p>
             <p className="text-sm text-gray-600">emails completed</p>
           </div>
+
           <div className="bg-orange-50 rounded-2xl p-6">
             <SafeIcon icon={FiZap} className="w-8 h-8 text-orange-500 mx-auto mb-2" />
             <p className="text-2xl font-bold text-gray-900">
@@ -243,20 +235,21 @@ const CompletionCelebration = ({ emailContent, sessionData, emailType, onStartNe
             <SafeIcon icon={FiEdit3} className="w-5 h-5" />
             <span>Write another email</span>
           </motion.button>
-          
-          <motion.button
-            onClick={handleViewInLibrary}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="px-8 py-4 bg-white text-gray-700 border border-gray-200 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all flex items-center justify-center space-x-2"
-          >
-            <SafeIcon icon={FiMail} className="w-5 h-5" />
-            <span>View in My Emails</span>
-          </motion.button>
+
+          <Link to="/dashboard">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="px-8 py-4 bg-white text-gray-700 border border-gray-200 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all flex items-center justify-center space-x-2"
+            >
+              <SafeIcon icon={FiHome} className="w-5 h-5" />
+              <span>Back to dashboard</span>
+            </motion.button>
+          </Link>
         </motion.div>
       )}
 
-      {/* Final Willy Message */}
+      {/* Final Message */}
       {showSuccessMetrics && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -272,9 +265,8 @@ const CompletionCelebration = ({ emailContent, sessionData, emailType, onStartNe
               <p className="text-blue-700 leading-relaxed">
                 {userFeedback.soundsLikeMe
                   ? "I love that this email sounds like you! That authentic voice is your superpower."
-                  : "You're getting closer to finding your authentic voice - that's exactly how this works."} 
-                Every email you write is practice in trusting yourself. Your best-fit clients will feel that 
-                authenticity way more than any 'perfect' template.
+                  : "You're getting closer to finding your authentic voice - that's exactly how this works."
+                } Every email you write is practice in trusting yourself. Your best-fit clients will feel that authenticity way more than any 'perfect' template.
               </p>
             </div>
           </div>

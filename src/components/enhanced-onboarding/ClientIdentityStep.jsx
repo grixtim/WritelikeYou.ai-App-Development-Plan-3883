@@ -9,7 +9,6 @@ const { FiUsers, FiArrowRight, FiArrowLeft } = FiIcons;
 
 const ClientIdentityStep = ({ data, onUpdate }) => {
   const [clientCurrentIdentity, setClientCurrentIdentity] = useState(data.clientCurrentIdentity || '');
-  
   const currentStep = 2;
   const totalSteps = 7;
 
@@ -24,7 +23,7 @@ const ClientIdentityStep = ({ data, onUpdate }) => {
       className="bg-white rounded-3xl shadow-xl p-8 md:p-12"
     >
       <OnboardingProgress currentStep={currentStep} totalSteps={totalSteps} />
-
+      
       <div className="text-center mb-8">
         <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
           <SafeIcon icon={FiUsers} className="w-8 h-8 text-white" />
@@ -59,6 +58,7 @@ const ClientIdentityStep = ({ data, onUpdate }) => {
             <SafeIcon icon={FiArrowLeft} className="w-5 h-5" />
             <span>Back</span>
           </Link>
+
           <Link
             to="/enhanced-onboarding/desired-identity"
             onClick={handleContinue}
@@ -76,8 +76,7 @@ const ClientIdentityStep = ({ data, onUpdate }) => {
 
       <div className="mt-8 p-4 bg-blue-50 rounded-xl">
         <p className="text-sm text-blue-700 text-center">
-          💡 <strong>Willy's tip:</strong> Focus on their internal story about themselves, not just external circumstances. 
-          How do they complete the sentence "I am someone who..."?
+          💡 <strong>My tip:</strong> Focus on their internal story about themselves, not just external circumstances. How do they complete the sentence "I am someone who..."?
         </p>
       </div>
     </motion.div>

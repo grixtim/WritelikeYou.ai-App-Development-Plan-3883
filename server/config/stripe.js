@@ -26,6 +26,7 @@ export const setupStripeProducts = async () => {
     try {
       // Check if products already exist
       const existingProducts = await stripe.products.list();
+      
       const monthlyProduct = existingProducts.data.find(p => p.name === PRODUCTS.MONTHLY.NAME);
       const annualProduct = existingProducts.data.find(p => p.name === PRODUCTS.ANNUAL.NAME);
       

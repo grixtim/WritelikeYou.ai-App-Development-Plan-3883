@@ -6,7 +6,7 @@ import { useAnalytics } from '../contexts/AnalyticsContext';
 import SafeIcon from '../common/SafeIcon';
 import * as FiIcons from 'react-icons/fi';
 
-const { FiEdit3, FiTrendingUp, FiHeart, FiTarget, FiCalendar, FiStar, FiZap } = FiIcons;
+const { FiEdit3, FiTrendingUp, FiBrain, FiTarget, FiCalendar, FiStar, FiZap } = FiIcons;
 
 const Dashboard = () => {
   const { user, userProgress } = useUser();
@@ -32,7 +32,7 @@ const Dashboard = () => {
       color: 'from-blue-500 to-purple-600'
     },
     {
-      title: 'View your progress',
+      title: 'View your progress', 
       description: 'See how your confidence is growing',
       icon: FiTrendingUp,
       link: '/progress',
@@ -65,7 +65,7 @@ const Dashboard = () => {
       >
         <div className="flex items-center space-x-4 mb-4">
           <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
-            <SafeIcon icon={FiHeart} className="w-6 h-6 text-white" />
+            <SafeIcon icon={FiBrain} className="w-6 h-6 text-white" />
           </div>
           <div>
             <h1 className="text-3xl font-bold text-gray-900">
@@ -95,7 +95,7 @@ const Dashboard = () => {
             {userProgress.totalWordsWritten > 0 && `${userProgress.totalWordsWritten} words total`}
           </p>
         </div>
-        
+
         <div className="bg-white rounded-2xl p-6 shadow-lg">
           <div className="flex items-center space-x-3 mb-2">
             <SafeIcon icon={FiTarget} className="w-5 h-5 text-green-500" />
@@ -106,10 +106,10 @@ const Dashboard = () => {
             {userProgress.confidenceScore > 50 ? 'Growing strong!' : 'Building up!'}
           </p>
         </div>
-        
+
         <div className="bg-white rounded-2xl p-6 shadow-lg">
           <div className="flex items-center space-x-3 mb-2">
-            <SafeIcon icon={FiHeart} className="w-5 h-5 text-purple-500" />
+            <SafeIcon icon={FiBrain} className="w-5 h-5 text-purple-500" />
             <span className="text-sm font-medium text-gray-500">Sounds Like Me</span>
           </div>
           <p className="text-3xl font-bold text-gray-900">
@@ -117,7 +117,7 @@ const Dashboard = () => {
           </p>
           <p className="text-sm text-purple-600 mt-1">authentic emails</p>
         </div>
-        
+
         <div className="bg-white rounded-2xl p-6 shadow-lg">
           <div className="flex items-center space-x-3 mb-2">
             <SafeIcon icon={FiZap} className="w-5 h-5 text-orange-500" />
@@ -182,7 +182,7 @@ const Dashboard = () => {
         </motion.div>
       )}
 
-      {/* Willy's Message */}
+      {/* My Message */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -194,9 +194,9 @@ const Dashboard = () => {
             <span className="text-white font-semibold">W</span>
           </div>
           <div>
-            <h3 className="font-semibold text-blue-900 mb-2">Message from Willy</h3>
+            <h3 className="font-semibold text-blue-900 mb-2">A message from me</h3>
             <p className="text-blue-700 leading-relaxed">
-              {userProgress.emailsWritten === 0 
+              {userProgress.emailsWritten === 0
                 ? `Hey ${user?.name}! Ready to write your first email that sounds authentically you? I've got some great prompts waiting that'll help you trust your voice.`
                 : `Hey ${user?.name}! I love seeing your confidence grow with each email. You've written ${userProgress.emailsWritten} authentic ${userProgress.emailsWritten === 1 ? 'email' : 'emails'} - that's real progress in trusting your voice!`
               }
